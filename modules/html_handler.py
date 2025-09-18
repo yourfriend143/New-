@@ -27,20 +27,17 @@ def categorize_urls(urls):
 
     for name, url in urls:
         new_url = url
-        if "akamaized.net/" in url or "1942403233.rsc.cdn77.org/" in url:
+        if ("akamaized.net/" in url or "1942403233.rsc.cdn77.org/" in url) and ".pdf" not in url:
             vid_id = url.split("/")[-2]
             new_url = f"https://www.khanglobalstudies.com/player?src={url}"
             videos.append((name, new_url))
 
-        elif "d1d34p8vz63oiq.cloudfront.net/" in url:
-            vid_id = url.split("/")[-2]
-            new_url = f"https://anonymouspwplayer-0e5a3f512dec.herokuapp.com/pw?url={url}&token={your_working_token}"
-            videos.append((name, new_url))
-                    
-        elif "youtube.com/embed" in url:
-            yt_id = url.split("/")[-1]
-            new_url = f"https://www.youtube.com/watch?v={yt_id}"
-
+        elif "youtu" in url:
+            if "youtube.com/embed" in url:
+                yt_id = url.split("/")[-1]
+                new_url = f"https://www.youtube.com/watch?v={yt_id}"
+            videos.append((name, url))
+            
         elif ".m3u8" in url:
             videos.append((name, url))
         elif ".mp4" in url:
@@ -459,3 +456,8 @@ async def html_handler(bot: Client, message: Message):
     os.remove(file_path)
     os.remove(html_file_path)
     
+#============================================================================================================================
+def register_html_handlers(bot):
+    @bot.on_message(filters.command(["t2h"]))
+    async def call_html_handler(bot: Client, message: Message):
+        await html_handler(bot, message)
