@@ -294,7 +294,7 @@ async def drm_handler(bot: Client, m: Message):
                 keys_string = " ".join([f"--key {key}" for key in keys])
 
             elif "classplusapp" in url:
-                signed_api = f"https://drm-veer-player.vercel.app/api?url={url}&auth=@veerjaatoffline"
+                signed_api = f"https://non-drm-veer.vercel.app//get_signed_url?url={url}"
                 response = requests.get(signed_api, timeout=20)
                 url = response.text.strip()
                 url = response.json()['url']  
