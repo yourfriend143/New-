@@ -197,6 +197,7 @@ async def drm_handler(bot: Client, m: Message):
             raw_text7 = '/d'
             channel_id = m.chat.id
             b_name = '**Link Input**'
+            path = os.path.join("downloads", "Free Batch")
             await editable.delete()
         
     if thumb.startswith("http://") or thumb.startswith("https://"):
@@ -288,16 +289,10 @@ async def drm_handler(bot: Client, m: Message):
          
             elif "https://cpvod.testbook.com/" in url or "classplusapp.com/drm/" in url:
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
-                url = f"https://drm-veer-player.vercel.app/api?url={url}&auth=@veerjaatoffline"
+                url = f"https://sainibotsdrm.vercel.app/api?url={url}&token={cptoken}&auth=4443683167"
                 mpd, keys = helper.get_mps_and_keys(url)
                 url = mpd
                 keys_string = " ".join([f"--key {key}" for key in keys])
-
-            elif "classplusapp" in url:
-                signed_api = f"https://drm-veer-player.vercel.app/api?url={url}&auth=@veerjaatoffline"
-                response = requests.get(signed_api, timeout=20)
-                url = response.text.strip()
-                url = response.json()['url']  
                 
             elif "tencdn.classplusapp" in url:
                 headers = {'host': 'api.classplusapp.com', 'x-access-token': f'{cptoken}', 'accept-language': 'EN', 'api-version': '18', 'app-version': '1.4.73.2', 'build-number': '35', 'connection': 'Keep-Alive', 'content-type': 'application/json', 'device-details': 'Xiaomi_Redmi 7_SDK-32', 'device-id': 'c28d3cb16bbdac01', 'region': 'IN', 'user-agent': 'Mobile-Android', 'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c', 'accept-encoding': 'gzip'}
