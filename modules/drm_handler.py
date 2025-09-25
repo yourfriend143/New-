@@ -293,8 +293,13 @@ async def drm_handler(bot: Client, m: Message):
          
             elif "https://cpvod.testbook.com/" in url or "classplusapp.com/drm/" in url:
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
-                url = f"https://drm-veer-player.vercel.app/api?url={url}&auth=@veerjaatoffline"
-                mpd, keys = helper.get_mps_and_keys2(url)
+                url = f"https://head-micheline-botupdatevip-f1804c58.koyeb.app/get_keys?url={url}@botupdatevip4u&user_id={user_id}"
+                result = helper.get_mps_and_keys2(url)
+                if result is None:
+                    await m.reply_text(f"❌ Token failed. Trying next one...")
+                    time.sleep(10)
+                    result = helper.get_mps_and_keys2(url)                
+                mpd, keys = result
                 url = mpd
                 keys_string = " ".join([f"--key {key}" for key in keys])
 
@@ -305,6 +310,12 @@ async def drm_handler(bot: Client, m: Message):
                 #url = response.json()['url']  
                 
             elif 'videos.classplusapp' in url or "tencdn.classplusapp" in url or "webvideos.classplusapp.com" in url:
+                result = helper.get_mps_and_keys3(url)
+                if result is None:
+                    await m.reply_text(f"❌ Token failed. Trying next one...")
+                    time.sleep(10)
+                    result = helper.get_mps_and_keys3(url)
+                mpd = result    
                 mpd = helper.get_mps_and_keys3(url) 
                 url = mpd
 
@@ -312,8 +323,13 @@ async def drm_handler(bot: Client, m: Message):
             
             elif 'media-cdn.classplusapp.com' in url or "media-cdn.classplusapp.com" in url and ("cc/" in url or "lc/" in url or "tencent/" in url or "drm/" in url) or'media-cdn-alisg.classplusapp.com' in url or 'media-cdn-a.classplusapp.com' in url : 
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
-                url = f"https://non-drm-veer.vercel.app//get_signed_url?url={url}"
-                mpd, keys = helper.get_mps_and_keys2(url)
+                url = f"https://head-micheline-botupdatevip-f1804c58.koyeb.app/get_keys?url={url}@botupdatevip4u&user_id={user_id}"
+                result = helper.get_mps_and_keys2(url)
+                if result is None:
+                    await m.reply_text(f"❌ Token failed. Trying next one...")
+                    time.sleep(10)
+                    result = helper.get_mps_and_keys2(url)                
+                mpd, keys = result
                 url = mpd
                 keys_string = " ".join([f"--key {key}" for key in keys])
 

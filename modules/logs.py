@@ -18,5 +18,3 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 # Initialize logger
 logger = logging.getLogger()
-
-
