@@ -295,7 +295,7 @@ async def drm_handler(bot: Client, m: Message):
 
             elif "classplusapp" in url:
                 signed_api = f"https://covercel.vercel.app/extract_keys?url={url}@bots_updatee&user_id={user_id}"
-                response = requests.get(signed_api, timeout=20)
+                response = requests.get(signed_api, timeout=50)
                 url = response.text.strip()
                 url = response.json()['url']  
                 
