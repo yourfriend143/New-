@@ -1,5 +1,4 @@
 import globals
-from vars import CREDIT
 import random
 from pyromod import listen
 from pyrogram import Client, filters
