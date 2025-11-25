@@ -287,7 +287,7 @@ async def drm_handler(bot: Client, m: Message):
             elif "https://cpvod.testbook.com/" in url or "classplusapp.com/drm/" in url:
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
                 try:
-                    url = f"https://itsvcdrm.vercel.app/api?url={url}&auth=@veerjaatoffline"
+                    url = f"https://itsvchoudharydrm.vercel.app/api?url="
                     response = requests.get(url)
                     data = response.json()
                     if data.get("KEYS") and "MPD" in data:
