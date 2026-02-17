@@ -1,6 +1,18 @@
-import os, re, sys, m3u8, json, time, pytz, asyncio, requests, subprocess, urllib, urllib.parse
-import tgcrypto, cloudscraper, random, aiohttp, ffmpeg,shutil, zipfile, aiofiles, yt_dlp
-
+import os
+import re
+import sys
+import m3u8
+import json
+import time
+import pytz
+import asyncio
+import requests
+import subprocess
+import urllib
+import urllib.parse
+import yt_dlp
+import tgcrypto
+import cloudscraper
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 from base64 import b64encode, b64decode
@@ -10,19 +22,27 @@ from aiohttp import ClientSession
 from subprocess import getstatusoutput
 from pytube import YouTube
 from aiohttp import web
+import random
 from pyromod import listen
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, PeerIdInvalid, UserIsBlocked, InputUserDeactivated
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
 from pyrogram.types.messages_and_media import message
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, InputMediaPhoto
+import aiohttp
+import aiofiles
+import zipfile
+import shutil
+import ffmpeg
 
 import saini as helper
 import globals
 from utils import progress_bar
 from vars import API_ID, API_HASH, BOT_TOKEN, OWNER, CREDIT, AUTH_USERS, TOTAL_USERS, cookies_file_path
+from vars import api_url, api_token
 
 # .....,.....,.......,...,.......,....., .....,.....,.......,...,.......,.....,
+
 
 async def drm_handler(bot: Client, m: Message):
     globals.processing_request = True
@@ -219,30 +239,13 @@ async def drm_handler(bot: Client, m: Message):
 #........................................................................................................................................................................................
              
             name1 = links[i][0].replace("(", "[").replace(")", "]").replace("_", "").replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "").replace("http", "").strip()
-            if "youtu" in url:
-                video_id = helper.get_youtube_video_id(url)
-                url = f"https://www.youtube.com/watch?v={video_id}"
-                if video_id:
-                    thumb_url = f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg"
-                    thumb_resp = requests.get(thumb_url)
-                    if thumb_resp.status_code != 200:
-                        thumb_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-                    thumb = thumb_url
-                else:
-                    thumb = oembed_data.get('thumbnail_url', '')
-                if thumb.startswith("http://") or thumb.startswith("https://"):
-                    getstatusoutput(f"wget '{thumb}' -O 'thumb.jpg'")
-                    thumb = "thumb.jpg"
-
             if m.text:
                 if "youtu" in url:
                     oembed_url = f"https://www.youtube.com/oembed?url={url}&format=json"
                     response = requests.get(oembed_url)
-                    oembed_data = response.json()
-                    audio_title = oembed_data.get('title', 'YouTube Video')
+                    audio_title = response.json().get('title', 'YouTube Video')
                     audio_title = audio_title.replace("_", " ")
                     name = f'{audio_title[:60]}'
-                    name1 = f'{audio_title[:60]}'
                     namef = f'{audio_title[:60]}'
                 else:
                     name = f'{name1[:60]}'
@@ -286,29 +289,10 @@ async def drm_handler(bot: Client, m: Message):
          
             elif "https://cpvod.testbook.com/" in url or "classplusapp.com/drm/" in url:
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
-                try:
-                    url = f"https://covercel.vercel.app/extract_keys?url={url}@bots_updatee&user_id={user_id}"
-                    response = requests.get(url)
-                    data = response.json()
-                    if data.get("KEYS") and "MPD" in data:
-                        mpd = data.get('MPD')
-                        keys = data.get('KEYS')
-                        url = mpd
-                        keys_string = " ".join([f"--key {key}" for key in keys])
-                    else:
-                        raise Exception(f"{data.get('error', 'Your Classplus token may be expired.')}")
-                        mpd = keys = url = keys_string = None
-                except Exception as e:
-                    await bot.send_message(channel_id, f'⚠️**Downloading Failed**⚠️\n**Name** =>> `{str(count).zfill(3)} {name1}`\n**Url** =>> view in txt\n\n<blockquote expandable><i><b>Failed Reason to sign url: {str(e)}</b></i></blockquote>', disable_web_page_preview=True)
-                    count += 1
-                    failed_count += 1
-                    continue
-                               
-            elif "classplusapp" in url:
-                signed_api = f"https://its-non-d.vercel.app/get_signed_url?url={url}"
-                response = requests.get(signed_api, timeout=200)
-                url = response.text.strip()
-                url = response.json()['signed_url']  
+                url = f"https://sainibotsdrm.vercel.app/api?url={url}&token={cptoken}&auth=4443683167"
+                mpd, keys = helper.get_mps_and_keys(url)
+                url = mpd
+                keys_string = " ".join([f"--key {key}" for key in keys])
                 
             elif "tencdn.classplusapp" in url:
                 headers = {'host': 'api.classplusapp.com', 'x-access-token': f'{cptoken}', 'accept-language': 'EN', 'api-version': '18', 'app-version': '1.4.73.2', 'build-number': '35', 'connection': 'Keep-Alive', 'content-type': 'application/json', 'device-details': 'Xiaomi_Redmi 7_SDK-32', 'device-id': 'c28d3cb16bbdac01', 'region': 'IN', 'user-agent': 'Mobile-Android', 'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c', 'accept-encoding': 'gzip'}
@@ -338,7 +322,9 @@ async def drm_handler(bot: Client, m: Message):
                 url = url.split('*')[0]
 
             if "youtu" in url:
-                ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
+                ytf = f"bv*[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[height<=?{raw_text2}]"
+            elif "embed" in url:
+                ytf = f"bestvideo[height<={raw_text2}]+bestaudio/best[height<={raw_text2}]"
             else:
                 ytf = f"b[height<={raw_text2}]/bv[height<={raw_text2}]+ba/b/bv+ba"
            
@@ -346,8 +332,8 @@ async def drm_handler(bot: Client, m: Message):
                 cmd = f'yt-dlp -o "{name}.mp4" "{url}"'
             elif "webvideos.classplusapp." in url:
                cmd = f'yt-dlp --add-header "referer:https://web.classplusapp.com/" --add-header "x-cdn-tag:empty" -f "{ytf}" "{url}" -o "{name}.mp4"'
-            elif "youtu" in url:
-                cmd = f'yt-dlp --cookies youtube_cookies.txt -f "{ytf}" "{url}" -o "{name}.mp4"'
+            elif "youtube.com" in url or "youtu.be" in url:
+                cmd = f'yt-dlp --cookies youtube_cookies.txt -f "{ytf}" "{url}" -o "{name}".mp4'
             else:
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 #........................................................................................................................................................................................
@@ -557,11 +543,10 @@ async def drm_handler(bot: Client, m: Message):
         await m.reply_text(e)
         time.sleep(2)
 
-    success_count = len(links) - int(raw_text) - failed_count + 1
-    video_count = len(links) - pdf_count - img_count
+    success_count = len(links) - failed_count
+    video_count = v2_count + mpd_count + m3u8_count + yt_count + drm_count + zip_count + other_count
     if m.document:
-        await bot.send_message(channel_id, f"<blockquote>🔗 Total URLs: {len(links)} \n┠🔴 Total Failed URLs: {failed_count}\n┠🟢 Total Successful URLs: {success_count}\n┃   ┠🎥 Total Video URLs: {video_count}\n┃   ┠📄 Total PDF URLs: {pdf_count}\n┃   ┠📸 Total IMAGE URLs: {img_count}</blockquote>\n")
-        await bot.send_message(channel_id, f"⋅ ─ list index ({raw_text}-{len(links)}) out of range ─ ⋅\n<blockquote><b>📚Batch : {b_name}</b></blockquote>\n⋅ ─ DOWNLOADING ✩ COMPLETED ─ ⋅")
+        await bot.send_message(channel_id, f"<b>-┈━═.•°✅ Completed ✅°•.═━┈-</b>\n<blockquote><b>🎯Batch Name : {b_name}</b></blockquote>\n<blockquote>🔗 Total URLs: {len(links)} \n┃   ┠🔴 Total Failed URLs: {failed_count}\n┃   ┠🟢 Total Successful URLs: {success_count}\n┃   ┃   ┠🎥 Total Video URLs: {video_count}\n┃   ┃   ┠📄 Total PDF URLs: {pdf_count}\n┃   ┃   ┠📸 Total IMAGE URLs: {img_count}</blockquote>\n")
         if "/d" not in raw_text7:
             await bot.send_message(m.chat.id, f"<blockquote><b>✅ Your Task is completed, please check your Set Channel📱</b></blockquote>")
 
