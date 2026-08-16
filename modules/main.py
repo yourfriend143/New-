@@ -8,6 +8,8 @@ import asyncio
 import requests
 import subprocess
 import random
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pyromod import listen
 from pyrogram import Client, filters
 from pyrogram.errors.exceptions.bad_request_400 import StickerEmojiInvalid
@@ -28,6 +30,31 @@ from youtube_handler import register_youtube_handlers
 from authorisation import register_authorisation_handlers
 from vars import API_ID, API_HASH, BOT_TOKEN, OWNER, CREDIT, AUTH_USERS, TOTAL_USERS, cookies_file_path
 # .....,.....,.......,...,.......,....., .....,.....,.......,...,.......,.....,
+
+# Koyeb Web Service health server. The Telegram bot remains the main process.
+class _HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path in ("/", "/health"):
+            body = b"OK"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        return
+
+def _start_koyeb_health_server():
+    port = int(os.getenv("PORT", "8000"))
+    server = ThreadingHTTPServer(("0.0.0.0", port), _HealthHandler)
+    print(f"Koyeb health server listening on 0.0.0.0:{port}", flush=True)
+    server.serve_forever()
+
+threading.Thread(target=_start_koyeb_health_server, daemon=True, name="koyeb-health").start()
 
 # Initialize the bot
 bot = Client(
