@@ -1,27 +1,40 @@
-#🇳‌🇮‌🇰‌🇭‌🇮‌🇱‌
-# Add your details here and then deploy by clicking on HEROKU Deploy button
 import os
-from os import environ
 
-API_ID = int(environ.get("API_ID", "23283708"))
-API_HASH = environ.get("API_HASH", "7805011fb84729023531f0fa3f000bec")
-BOT_TOKEN = environ.get("BOT_TOKEN", "8579722162:AAHej40kAnYfJ2r_bzOZkWokZCUovpuMxeE")
 
-OWNER = int(environ.get("OWNER", "6481888008"))
-CREDIT = environ.get("CREDIT", "𝐆𝐔𝐌𝐍𝐀𝐀𝐌(•‿•)")
+def required_env(name: str) -> str:
+    value = os.getenv(name, "").strip()
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+
+API_ID = int(required_env("API_ID"))
+API_HASH = required_env("API_HASH")
+BOT_TOKEN = required_env("BOT_TOKEN")
+OWNER = int(required_env("OWNER"))
+
+CREDIT = os.getenv("CREDIT", "𝐑𝐒 𝐁𝐡𝐚𝐫𝐝𝐰𝐚𝐣")
 cookies_file_path = os.getenv("cookies_file_path", "youtube_cookies.txt")
 
-TOTAL_USER = os.environ.get('TOTAL_USERS', '6481888008').split(',')
-TOTAL_USERS = [int(user_id) for user_id in TOTAL_USER]
 
-AUTH_USER = os.environ.get('AUTH_USERS', '6481888008').split(',')
-AUTH_USERS = [int(user_id) for user_id in AUTH_USER]
-if int(OWNER) not in AUTH_USERS:
-    AUTH_USERS.append(int(OWNER))
-  
-# .....,.....,.......,...,.......,....., .....,.....,.......,...,.......,.....,
-api_url = "http://master-api-v3.vercel.app/"
-api_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzkxOTMzNDE5NSIsInRnX3VzZXJuYW1lIjoi4p61IFtvZmZsaW5lXSIsImlhdCI6MTczODY5MjA3N30.SXzZ1MZcvMp5sGESj0hBKSghhxJ3k1GTWoBUbivUe1I"
-# .....,.....,.......,...,.......,....., .....,.....,.......,...,.
+def parse_user_ids(name: str, default: str = ""):
+    raw = os.getenv(name, default).strip()
+    if not raw:
+        return []
+    result = []
+    for value in raw.split(","):
+        value = value.strip()
+        if value:
+            result.append(int(value))
+    return result
 
 
+TOTAL_USERS = parse_user_ids("TOTAL_USERS")
+AUTH_USERS = parse_user_ids("AUTH_USERS")
+if OWNER not in AUTH_USERS:
+    AUTH_USERS.append(OWNER)
+
+# External DRM/master API configuration. Keep credentials in Koyeb Secrets/Env,
+# never in GitHub source code.
+api_url = os.getenv("API_URL", "http://master-api-v3.vercel.app/")
+api_token = os.getenv("API_TOKEN", "")
