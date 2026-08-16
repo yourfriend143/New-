@@ -1,58 +1,37 @@
-<h1 align="center">
-  ✨ SAINI DRM Bot ✨
-</h1>
+# Saini TXT Leech Bot — Koyeb
 
-<p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=18&pause=1000&color=00F7FF&center=true&vCenter=true&width=435&lines=Welcome+to+DRM+Bot+by+@nikhil.saini.khe" alt="Typing SVG" />
-</p>
+Telegram bot for processing video/text links and related downloads.
 
----
+## Koyeb deployment
 
-> 🔐 **Note:** CP DRM supported — Minimum quality **360p**  
-> 🚫 **Do not remove the credit tag**
+Deploy this repository as a **WORKER** service using the repository `Dockerfile`.
+Do not expose an HTTP port; the bot runs as a long-lived Telegram worker.
 
----
+### Required environment variables
 
-## 📜 Commands
+- `API_ID` — Telegram API ID
+- `API_HASH` — Telegram API hash
+- `BOT_TOKEN` — Telegram bot token
+- `OWNER` — Telegram numeric user ID of the owner
 
-| Command | Description |
-|---------|-------------|
-| `/start` | Start the bot |
-| `/stop`  | Stop the bot |
+### Optional environment variables
 
----
+- `CREDIT`
+- `AUTH_USERS` — comma-separated Telegram user IDs
+- `TOTAL_USERS` — comma-separated Telegram user IDs
+- `cookies_file_path` — defaults to `youtube_cookies.txt`
+- `API_URL` — defaults to `http://master-api-v3.vercel.app/`
+- `API_TOKEN` — token for the external DRM/master API, if required by the bot
 
-## 🚀 Deployment Process
+Keep all credentials in Koyeb environment variables/secrets. Do not commit them to GitHub.
 
-🎬 **Watch Full Deployment Tutorial:**  
-[![YouTube Video](https://img.shields.io/badge/Watch%20on-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/PYDtSTM6w44?si=noKPl7o4iU9SR_TO)
+## Koyeb settings
 
-### Step-by-Step:
-1. **Fork** the Repository  
-2. **Edit `vars.py`** — Fill in your `API_ID` and `API_HASH`  
-3. **Edit `README.md`** — Change the deploy button links to point to your own fork  
-4. Choose any platform and **Deploy** directly using the buttons below:
+- Service type: **Worker**
+- Builder: **Dockerfile**
+- Dockerfile path: `Dockerfile`
+- Command: leave the Dockerfile command unchanged
+- Port: none
+- Minimum instances: 1
 
----
-
-## 📦 Deploy via Buttons
-
-[![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-blue?style=for-the-badge&logo=render)](https://render.com/deploy)  
-[![Deploy to Heroku](https://img.shields.io/badge/Deploy%20to-Heroku-purple?style=for-the-badge&logo=heroku)](https://www.heroku.com/deploy?template=https://github.com/yourfriend143/New-.git)  
-[![Deploy to Koyeb](https://img.shields.io/badge/Deploy%20to-Koyeb-black?style=for-the-badge&logo=koyeb)](https://app.koyeb.com/deploy?name=saini-txt-direct&repository=nikhilsainiop%2FSaini-txt-direct&branch=main&instance_type=free&instances_min=0)
-
----
-
-## 🤖 Bot Usernames
-
-- [Saini_Contact](https://t.me/saini_contact_bot)
-
----
-
-## 📂 Original Repositories
-
-- 🔗 [pagal-hu-me](https://github.com/yourfriend143/New-.git)
-
----
-
-> 👨‍💻 Created with ❤️ by [@nikhil.saini.khe](https://instagram.com/nikhil.saini.khe)
+The Docker image installs FFmpeg, aria2 and Bento4 (`mp4decrypt`) and then starts `modules/main.py`.

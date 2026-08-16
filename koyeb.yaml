@@ -1,0 +1,5 @@
+# Koyeb deployment notes:
+# Service type: WORKER
+# Builder: Dockerfile
+# Dockerfile: ./Dockerfile
+# Required environment variables are documented in README.md.
