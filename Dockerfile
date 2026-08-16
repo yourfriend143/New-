@@ -29,5 +29,6 @@ RUN wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip \
 
 COPY . .
 
-# Koyeb WORKER service: no HTTP port is required because this is a Telegram bot.
+# Koyeb Web Service: the bot also exposes a lightweight /health endpoint on $PORT.
+EXPOSE 8000
 CMD ["python", "modules/main.py"]

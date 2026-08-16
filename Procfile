@@ -1,1 +1,1 @@
-worker: python modules/main.py
+web: python modules/main.py

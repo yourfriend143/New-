@@ -1,5 +1,5 @@
-# Koyeb deployment notes:
-# Service type: WORKER
+# Koyeb Web Service settings:
 # Builder: Dockerfile
-# Dockerfile: ./Dockerfile
-# Required environment variables are documented in README.md.
+# Exposed port: 8000 / HTTP
+# Health check: HTTP GET /health
+# Set PORT=8000 only if Koyeb does not inject PORT automatically.
