@@ -28,6 +28,25 @@ from youtube_handler import register_youtube_handlers
 from authorisation import register_authorisation_handlers
 from vars import API_ID, API_HASH, BOT_TOKEN, OWNER, CREDIT, AUTH_USERS, TOTAL_USERS, cookies_file_path
 
+# Koyeb health server: keep port 8000 alive even when Koyeb launches this file directly.
+from flask import Flask
+from threading import Thread
+
+health_app = Flask(__name__)
+
+@health_app.get("/")
+def _health_root():
+    return "DRM Bot is running", 200
+
+@health_app.get("/health")
+def _health():
+    return {"status": "ok"}, 200
+
+def _run_health_server():
+    health_app.run(host="0.0.0.0", port=int(os.getenv("PORT", "8000")), use_reloader=False)
+
+Thread(target=_run_health_server, daemon=True).start()
+
 # Initialize the Telegram bot before registering any handlers.
 bot = Client(
     "drm_bot",
@@ -35,6 +54,12 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
 )
+
+# Main menu keyboard (used by /start and back_to_main_menu).
+keyboard = InlineKeyboardMarkup([
+    [InlineKeyboardButton("✨ Commands", callback_data="commands")],
+    [InlineKeyboardButton("🆔 Get ID", callback_data="id")],
+])
 # .....,.....,.......,...,.......,....., .....,.....,.......,...,.......,.....,
 
 # Koyeb Web Service health server. The Telegram bot remains the main process.

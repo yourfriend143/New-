@@ -2,6 +2,7 @@ from vars import OWNER, CREDIT
 import threading
 import time
 import requests
+import os
 
 processing_request = False
 cancel_requested = False
@@ -24,7 +25,10 @@ cptoken = ""
 def generate_cptoken():
     """Fetch fresh Classplus token automatically"""
     try:
-        response = requests.get("https://ivjtoken.vercel.app/api/ivjaatcptoken", timeout=15)
+        token_api = os.getenv("CLASSPLUS_TOKEN_API", "")
+        if not token_api:
+            return None
+        response = requests.get(token_api, timeout=15)
         if response.status_code == 200:
             data = response.json()
             token = data.get("cptoken") or data.get("token")
@@ -34,7 +38,7 @@ def generate_cptoken():
             else:
                 print("[⚠️] Token key not found in API response.")
         else:
-            print(f"[⚠️] Token API returned status {response.status_code}")
+            return None
     except Exception as e:
         print(f"[⚠️] Error fetching Classplus token: {e}")
     return None

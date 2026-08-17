@@ -11,7 +11,7 @@ def required_env(name: str) -> str:
 API_ID = int(required_env("API_ID"))
 API_HASH = required_env("API_HASH")
 BOT_TOKEN = required_env("BOT_TOKEN")
-OWNER = required_env("OWNER_ID")
+OWNER = int(required_env("OWNER_ID"))
 
 CREDIT = os.getenv("CREDIT", "𝐑𝐒 𝐁𝐡𝐚𝐫𝐝𝐰𝐚𝐣")
 cookies_file_path = os.getenv("cookies_file_path", "youtube_cookies.txt")
