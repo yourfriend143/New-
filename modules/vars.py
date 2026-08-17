@@ -8,10 +8,10 @@ def required_env(name: str) -> str:
     return value
 
 
-API_ID = int(required_env("23283708"))
-API_HASH = required_env("7805011fb84729023531f0fa3f000bec")
-BOT_TOKEN = required_env("8257275378:AAE3H-5tuILZPVxLXvcFothlT9sJRIzogFo")
-OWNER = int(required_env("6481888008"))
+API_ID = int(required_env("API_ID"))
+API_HASH = required_env("API_HASH")
+BOT_TOKEN = required_env("BOT_TOKEN")
+OWNER = required_env("OWNER_ID")
 
 CREDIT = os.getenv("CREDIT", "𝐑𝐒 𝐁𝐡𝐚𝐫𝐝𝐰𝐚𝐣")
 cookies_file_path = os.getenv("cookies_file_path", "youtube_cookies.txt")
