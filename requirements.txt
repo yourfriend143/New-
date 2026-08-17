@@ -19,3 +19,4 @@ aiofiles==24.1.0
 PyMuPDF==1.26.4
 Pillow==10.2.0
 m3u8
+pytube
