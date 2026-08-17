@@ -1,0 +1,6 @@
+device_private_key.txt
+youtube_cookies.txt
+__pycache__/
+*.pyc
+.env
+downloads/

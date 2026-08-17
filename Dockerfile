@@ -30,5 +30,4 @@ RUN wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip \
 COPY . .
 
 # Koyeb Web Service: the bot also exposes a lightweight /health endpoint on $PORT.
-EXPOSE 8000
 CMD ["python", "modules/main.py"]
