@@ -13,8 +13,8 @@ Use a **Worker** service with the Dockerfile builder.
 - `CREDIT`
 - `AUTH_USERS`
 - `TOTAL_USERS`
-- `API_URL`
-- `API_TOKEN`
+- `(removed: external DRM API)`
+- `(removed: external DRM API)`
 - `cookies_file_path`
 
 Do not commit private keys, YouTube cookies, `.env` files, or other secrets.
