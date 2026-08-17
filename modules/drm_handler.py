@@ -243,7 +243,7 @@ async def drm_handler(bot: Client, m: Message):
                 if "youtu" in url:
                     oembed_url = f"https://www.youtube.com/oembed?url={url}&format=json"
                     response = requests.get(oembed_url)
-                    audio_title = response.json().get('title', 'YouTube Video')
+                    audio_title = response.json().get('title', 'YouTube Video') if response.ok and response.text.strip() else 'YouTube Video'
                     audio_title = audio_title.replace("_", " ")
                     name = f'{audio_title[:60]}'
                     namef = f'{audio_title[:60]}'
@@ -336,8 +336,16 @@ async def drm_handler(bot: Client, m: Message):
             #elif "tencdn.classplusapp" in url:
                 headers = {'host': 'api.classplusapp.com', 'x-access-token': f'{cptoken}', 'accept-language': 'EN', 'api-version': '18', 'app-version': '1.4.73.2', 'build-number': '35', 'connection': 'Keep-Alive', 'content-type': 'application/json', 'device-details': 'Xiaomi_Redmi 7_SDK-32', 'device-id': 'c28d3cb16bbdac01', 'region': 'IN', 'user-agent': 'Mobile-Android', 'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c', 'accept-encoding': 'gzip'}
                 params = {"url": f"{url}"}
-                response = requests.get('https://api.classplusapp.com/cams/uploader/video/jw-signed-url', headers=headers, params=params)
-                url = response.json()['url']  
+                response = requests.get('https://api.classplusapp.com/cams/uploader/video/jw-signed-url', headers=headers, params=params, timeout=30)
+                if not response.ok:
+                    raise RuntimeError(f'Classplus signed URL API HTTP {response.status_code}: {response.text[:250]}')
+                try:
+                    response_data = response.json()
+                except ValueError:
+                    raise RuntimeError(f'Classplus signed URL API returned non-JSON: {(response.text or "").strip()[:250]}')
+                url = response_data.get('url')
+                if not url:
+                    raise RuntimeError(f'Classplus signed URL API missing url: {response_data}')
            
             #elif 'videos.classplusapp' in url:
                 url = requests.get(f'https://api.classplusapp.com/cams/uploader/video/jw-signed-url?url={url}', headers={'x-access-token': f'{cptoken}'}).json()['url']

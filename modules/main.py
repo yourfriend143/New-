@@ -208,7 +208,11 @@ def notify_owner():
         "chat_id": OWNER,
         "text": "𝐁𝐨𝐭 𝐑𝐞𝐬𝐭𝐚𝐫𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲 ✅"
     }
-    requests.post(url, data=data)
+    try:
+        response = requests.post(url, data=data, timeout=10)
+        print(f"[Telegram] Owner notification: HTTP {response.status_code}")
+    except Exception as e:
+        print(f"[⚠️] Owner notification failed: {e}")
 
 def reset_and_set_commands():
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/setMyCommands"

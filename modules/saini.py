@@ -29,24 +29,40 @@ def duration(filename):
         stderr=subprocess.STDOUT)
     return float(result.stdout)
 
+def _json_response(response, context='API'):
+    """Parse JSON safely and raise a useful error instead of JSONDecodeError."""
+    if not response.ok:
+        raise RuntimeError(f"{context} returned HTTP {response.status_code}: {response.text[:300]}")
+    try:
+        return response.json()
+    except ValueError:
+        body = (response.text or '').strip()
+        raise RuntimeError(f"{context} returned non-JSON response: {body[:300] or '<empty response>'}")
+
 def get_mps_and_keys(api_url):
-    response = requests.get(api_url)
-    response_json = response.json()
+    response = requests.get(api_url, timeout=30)
+    response_json = _json_response(response, 'DRM API')
     mpd = response_json.get('MPD')
     keys = response_json.get('KEYS')
+    if not mpd or not keys:
+        raise RuntimeError(f"DRM API JSON missing MPD/KEYS: {response_json}")
     return mpd, keys
 
 def get_mps_and_keys2(api_url):
-    response = requests.get(api_url) 
-    response_json = response.json()
+    response = requests.get(api_url, timeout=30)
+    response_json = _json_response(response, 'DRM API')
     mpd = response_json.get('mpd_url')
     keys = response_json.get('keys')
+    if not mpd or not keys:
+        raise RuntimeError(f"DRM API JSON missing mpd_url/keys: {response_json}")
     return mpd, keys
     
 def get_mps_and_keys3(api_url):
-    response = requests.get(api_url)   
-    response_json = response.json()
+    response = requests.get(api_url, timeout=30)
+    response_json = _json_response(response, 'DRM API')
     mpd = response_json.get('url')
+    if not mpd:
+        raise RuntimeError(f"DRM API JSON missing url: {response_json}")
     return mpd
 
 

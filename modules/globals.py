@@ -30,7 +30,11 @@ def generate_cptoken():
             return None
         response = requests.get(token_api, timeout=15)
         if response.status_code == 200:
-            data = response.json()
+            try:
+                data = response.json()
+            except ValueError:
+                print('[⚠️] Token API returned non-JSON response; continuing without refresh.')
+                return None
             token = data.get("cptoken") or data.get("token")
             if token:
                 print("[✅] Classplus Token Refreshed Successfully.")
