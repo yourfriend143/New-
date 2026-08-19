@@ -34,3 +34,7 @@ AUTH_USERS = parse_user_ids("AUTH_USERS")
 if OWNER not in AUTH_USERS:
     AUTH_USERS.append(OWNER)
 
+# External DRM/master API configuration. Keep credentials in Koyeb Secrets/Env,
+# never in GitHub source code.
+api_url = os.getenv("API_URL", "https://utkashshs-cf514d91880b.herokuapp.com/api?url")
+api_token = os.getenv("API_TOKEN", "")

@@ -35,9 +35,11 @@ import zipfile
 import shutil
 import ffmpeg
 
+import saini as helper
 import globals
 from utils import progress_bar
 from vars import API_ID, API_HASH, BOT_TOKEN, OWNER, CREDIT, AUTH_USERS, TOTAL_USERS, cookies_file_path
+from vars import api_url, api_token
 
 # .....,.....,.......,...,.......,....., .....,.....,.......,...,.......,.....,
 
@@ -324,13 +326,19 @@ async def drm_handler(bot: Client, m: Message):
             else:
                 url = url
                 
-                # External DRM/key API dependency intentionally removed.
-                # DRM URLs that require third-party key extraction are not processed.
-                await m.reply_text(
-                    "⚠️ DRM URL skipped. The external DRM/key API has been removed from this build.\n"
-                    "Use a non-DRM/public media URL or a service/API you are authorized to use."
+                # elif "https://cpvod.testbook.com/" in url or "classplusapp.com/drm/" in url:
+                url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
+                # Authorized DRM API endpoint. The source URL is URL-encoded so
+                # query-string characters inside the media URL are preserved.
+                drm_api = os.getenv(
+                    "DRM_API_URL",
+                    "https://utkashshs-cf514d91880b.herokuapp.com/api?url"
                 )
-                continue
+                separator = "=" if drm_api.endswith("url") else ("&" if "?" in drm_api else "?url=")
+                drm_request_url = f"{drm_api}{separator}{urllib.parse.quote(url, safe='')}"
+                mpd, keys = helper.get_mps_and_keys(drm_request_url)
+                url = mpd
+                keys_string = " ".join([f"--key {key}" for key in keys])
                 
             #elif "tencdn.classplusapp" in url:
                 headers = {'host': 'api.classplusapp.com', 'x-access-token': f'{cptoken}', 'accept-language': 'EN', 'api-version': '18', 'app-version': '1.4.73.2', 'build-number': '35', 'connection': 'Keep-Alive', 'content-type': 'application/json', 'device-details': 'Xiaomi_Redmi 7_SDK-32', 'device-id': 'c28d3cb16bbdac01', 'region': 'IN', 'user-agent': 'Mobile-Android', 'webengage-luid': '00000187-6fe4-5d41-a530-26186858be4c', 'accept-encoding': 'gzip'}
