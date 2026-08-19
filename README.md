@@ -20,8 +20,8 @@ Do not expose an HTTP port; the bot runs as a long-lived Telegram worker.
 - `AUTH_USERS` — comma-separated Telegram user IDs
 - `TOTAL_USERS` — comma-separated Telegram user IDs
 - `cookies_file_path` — defaults to `youtube_cookies.txt`
-- `(removed: external DRM API)` — defaults to ``
-- `(removed: external DRM API)` — token for the external DRM/master API, if required by the bot
+- `API_URL` — defaults to `http://master-api-v3.vercel.app/`
+- `API_TOKEN` — token for the external DRM/master API, if required by the bot
 
 Keep all credentials in Koyeb environment variables/secrets. Do not commit them to GitHub.
 
